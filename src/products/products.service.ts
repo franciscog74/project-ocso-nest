@@ -34,7 +34,9 @@ export class ProductsService {
 
  async findByProvider(id: string) {
     const prods = await this.productRepository.findBy({
-      provider: id
+      provider: {
+        providerID: id
+      }
     });
     if (!prods.length)
       throw new NotFoundException();
