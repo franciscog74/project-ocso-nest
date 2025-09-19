@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateManagerDto } from './dto/create-manager.dto';
 import { UpdateManagerDto } from './dto/update-manager.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Manager } from './entities/manager.entity';
+import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ManagersService {
-  create(createManagerDto: CreateManagerDto) {
-    return 'This action adds a new manager';
+  constructor(
+    @InjectRepository(Manager)
+    private managerRepository: Repository<Manager>
+  ) {}
+  async create(createManagerDto: CreateManagerDto) {
+    createManagerDto.managerId ||= uuid();
+    return await this.managerRepository.save(createManagerDto);
   }
 
-  findAll() {
-    return `This action returns all managers`;
+  async findAll() {
+    return await this.managerRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} manager`;
+  async findOne(id: string) {
+    const manager = await this.managerRepository.findOneBy({
+      managerId: id
+    });
+    if (!manager)
+      throw new NotFoundException();
+    return manager;
   }
 
-  update(id: number, updateManagerDto: UpdateManagerDto) {
-    return `This action updates a #${id} manager`;
+  async update(id: string, updateManagerDto: UpdateManagerDto) {
+        const managerToUpdate = await this.managerRepository.preload({
+      managerId: id,
+      ...updateManagerDto
+    });
+    if (!managerToUpdate)
+      throw new NotFoundException();
+    await this.managerRepository.save(managerToUpdate);
+    return managerToUpdate;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} manager`;
+  async remove(id: string) {
+    const del = await this.managerRepository.delete({
+      managerId: id
+    });
+    if (!del.affected)
+      throw new NotFoundException();
+    return {
+      message: `Objeto con id ${id} eliminado`
+    };
   }
 }
