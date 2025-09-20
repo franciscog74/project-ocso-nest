@@ -4,7 +4,6 @@ import { UpdateManagerDto } from './dto/update-manager.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Manager } from './entities/manager.entity';
 import { Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ManagersService {
@@ -13,7 +12,6 @@ export class ManagersService {
     private managerRepository: Repository<Manager>
   ) {}
   async create(createManagerDto: CreateManagerDto) {
-    createManagerDto.managerId ||= uuid();
     return await this.managerRepository.save(createManagerDto);
   }
 

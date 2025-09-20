@@ -4,7 +4,6 @@ import { UpdateProviderDto } from './dto/update-provider.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Provider } from './entities/provider.entity';
 import { Like, Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ProvidersService {
@@ -14,7 +13,6 @@ export class ProvidersService {
   ) {}
 
   async create(createProviderDto: CreateProviderDto) {
-    createProviderDto.providerID ||= uuid();
     const provider = await this.providerRepository.save(createProviderDto);
     return provider;
   }
