@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { ProvidersService } from './providers.service';
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { UserData } from 'src/auth/decorators/user.decorator';
+import { User } from 'src/auth/entities/user.entity';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
-@UseGuards(AuthGuard)
 @Controller('providers')
 export class ProvidersController {
   constructor(private readonly providersService: ProvidersService) {}
@@ -14,8 +18,11 @@ export class ProvidersController {
     return this.providersService.create(createProviderDto);
   }
 
+  @Auth("Employee")
   @Get()
-  findAll() {
+  findAll(@UserData() user: User) {
+    if (user.userRoles.includes("Employee"))
+      throw new UnauthorizedException("Solo admins y managers");
     return this.providersService.findAll();
   }
 
