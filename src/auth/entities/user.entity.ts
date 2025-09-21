@@ -13,7 +13,7 @@ export class User {
 
     @Column({
         type: "text",
-        default: "Employee",
+        default: ["Employee"],
         array: true
     })
     userRoles: string[];
