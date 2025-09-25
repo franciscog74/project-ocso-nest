@@ -20,7 +20,7 @@ import { AuthModule } from './auth/auth.module';
     entities: [],
     autoLoadEntities: true,
     synchronize: true,
-  }), EmployeesModule, ProductsModule, ProvidersModule, ManagersModule, LocationsModule, RegionsModule, AuthModule],
+  }), AuthModule, EmployeesModule, ProductsModule, ProvidersModule, ManagersModule, LocationsModule, RegionsModule],
   controllers: [],
   providers: [],
 })
