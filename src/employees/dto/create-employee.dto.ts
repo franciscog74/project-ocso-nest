@@ -1,24 +1,25 @@
-import { IsEmail, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
+import { IsEmail, IsObject, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
 import { Employee } from "../entities/employee.entity";
+import { Location } from "src/locations/entities/location.entity";
 
 export class CreateEmployeeDto extends Employee {
-    @IsUUID()
-    @IsOptional()
-    id: string;
+    @IsString()
+    @MaxLength(50)
+    employeeName: string;
 
     @IsString()
     @MaxLength(50)
-    name: string;
-
-    @IsString()
-    @MaxLength(50)
-    lastName: string;
+    employeeLastName: string;
 
     @IsString()
     @MaxLength(15)
-    phone: string;
+    employeePhone: string;
 
     @IsString()
     @IsEmail()
-    email: string;
+    employeeEmail: string;
+
+    @IsOptional()
+    @IsObject()
+    location: Location;
 }

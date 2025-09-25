@@ -16,7 +16,7 @@ export class EmployeesService {
   ){}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    createEmployeeDto.id ||= uuid();
+    createEmployeeDto.employeeId ||= uuid();
     const employee = await this.employeeRepository.save(createEmployeeDto);
     return employee;
   }
@@ -27,16 +27,27 @@ export class EmployeesService {
 
   async findOne(id: string) {
     const employee = await this.employeeRepository.findOneBy({
-      id
+      employeeId: id
     });
     if (!employee)
       throw new NotFoundException();
     return employee;
   }
 
+  async findByLocation(id: number) {
+    const employees = await this.employeeRepository.findBy({
+      location: {
+        locationId: id
+      }
+    });
+    if (!employees.length)
+      throw new NotFoundException();
+    return employees;
+  }
+
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
     const employeeToUpdate = await this.employeeRepository.preload({
-      id,
+      employeeId: id,
       ...updateEmployeeDto
     });
     if (!employeeToUpdate)
@@ -47,7 +58,7 @@ export class EmployeesService {
 
   async remove(id: string) {
     const del = await this.employeeRepository.delete({
-      id
+      employeeId: id
     });
     if (!del.affected)
       throw new NotFoundException();

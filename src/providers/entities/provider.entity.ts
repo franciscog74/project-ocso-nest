@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Product } from "src/products/entities/product.entity";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
@@ -6,12 +7,25 @@ export class Provider {
     @PrimaryGeneratedColumn("uuid")
     providerID: string;
 
+    @ApiProperty({
+        default: "FEMSA"
+    })
     @Column("text")
     providerName: string;
 
-    @Column("text")
+    @ApiProperty({
+        default: "correo@coca.com"
+    })
+    @Column({
+        type: "text",
+        unique: true
+    })
     providerEmail: string;
 
+    
+    @ApiPropertyOptional({
+        default: "0123456789"
+    })
     @Column({
         type: "text",
         nullable: true
