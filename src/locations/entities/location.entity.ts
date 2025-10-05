@@ -33,7 +33,9 @@ export class Location {
     @ApiProperty({
         type: () => Manager
     })
-    @OneToOne(() => Manager)
+    @OneToOne(() => Manager, {
+        eager: true
+    })
     @JoinColumn({
         name: "managerId"
     })
