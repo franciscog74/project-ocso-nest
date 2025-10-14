@@ -36,6 +36,9 @@ export class Manager {
     managerPhone: string;
 
     @OneToOne(() => Location)
+    @JoinColumn({
+        name: "locationId"
+    })
     location: Location;
 
     @ApiPropertyOptional({

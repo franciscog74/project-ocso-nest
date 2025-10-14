@@ -4,12 +4,15 @@ import { UpdateLocationDto } from './dto/update-location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Location } from './entities/location.entity';
+import { Manager } from 'src/managers/entities/manager.entity';
 
 @Injectable()
 export class LocationsService {
   constructor(
     @InjectRepository(Location)
-    private locationRepository: Repository<Location>
+    private locationRepository: Repository<Location>,
+    @InjectRepository(Manager)
+    private managerRepository: Repository<Manager>
   ) {}
 
   async create(createLocationDto: CreateLocationDto) {
@@ -30,6 +33,15 @@ export class LocationsService {
   }
 
   async update(id: number, updateLocationDto: UpdateLocationDto) {
+    await this.managerRepository
+      .createQueryBuilder()
+      .update()
+      .set({ location: undefined })
+      .where("locationId = :id", {
+        id
+      })
+      .execute();
+
     const locationToUpdate = await this.locationRepository.preload({
       locationId: id,
       ...updateLocationDto
@@ -37,6 +49,15 @@ export class LocationsService {
     if (!locationToUpdate)
       throw new NotFoundException();
     await this.locationRepository.save(locationToUpdate);
+
+    const updatedManager = await this.managerRepository.preload({
+      managerId: updateLocationDto.manager,
+      location: locationToUpdate
+    });
+
+    if (updatedManager)
+      await this.managerRepository.save(updatedManager);
+    
     return locationToUpdate;
   }
 
