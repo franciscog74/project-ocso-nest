@@ -1,4 +1,4 @@
-import { IsEmail, IsObject, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
+import { IsEmail, IsObject, IsOptional, IsString, MaxLength } from "class-validator";
 import { Employee } from "../entities/employee.entity";
 import { Location } from "src/locations/entities/location.entity";
 

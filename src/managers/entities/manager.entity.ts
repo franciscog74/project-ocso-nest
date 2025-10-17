@@ -39,7 +39,7 @@ export class Manager {
     @JoinColumn({
         name: "locationId"
     })
-    location: Location | null;
+    location: Location | number | null;
 
     @ApiPropertyOptional({
         type: () => User
