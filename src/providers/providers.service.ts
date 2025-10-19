@@ -18,12 +18,21 @@ export class ProvidersService {
   }
 
   async findAll() {
-    return await this.providerRepository.find();
+    return await this.providerRepository.find({
+      relations: {
+        products: true
+      }
+    });
   }
 
   async findByName(name: string) {
-    const provider = await this.providerRepository.findOneBy({
-      providerName: Like(`%${name}%`)
+    const provider = await this.providerRepository.findOne({
+      where: {
+        providerName: Like(`%${name}%`)
+      },
+      relations: {
+        products: true
+      }
     });
     if (!provider)
       throw new NotFoundException();
