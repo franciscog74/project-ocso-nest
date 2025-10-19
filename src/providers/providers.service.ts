@@ -40,8 +40,13 @@ export class ProvidersService {
   }
 
   async findOne(id: string) {
-    const provider = await this.providerRepository.findOneBy({
-      providerID: id
+    const provider = await this.providerRepository.findOne({
+      where: {
+        providerID: id
+      },
+      relations: {
+        products: true
+      }
     });
     if (!provider)
       throw new NotFoundException();
