@@ -24,12 +24,9 @@ export class Product {
     @Column({ type: "int" })
     sealCount: number;
 
-    @ApiPropertyOptional({
-        type: () => Provider
-    })
     @ManyToOne(() => Provider, (provider) => provider.products)
     @JoinColumn({
         name: "providerId"
     })
-    provider: Provider;
+    provider: Provider | string;
 }
