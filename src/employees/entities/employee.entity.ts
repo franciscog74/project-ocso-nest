@@ -47,7 +47,7 @@ export class Employee {
     @JoinColumn({
         name: "locationId"
     })
-    location: Location;
+    location: Location | number;
 
     @ApiPropertyOptional({
         type: () => User
