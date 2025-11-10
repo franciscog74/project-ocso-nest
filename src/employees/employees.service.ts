@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { v4 as uuid } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities/employee.entity';
 import { Repository } from 'typeorm';
+import { createReadStream } from 'fs';
+import { extname, join } from 'path';
 
 @Injectable()
 export class EmployeesService {
@@ -13,7 +15,7 @@ export class EmployeesService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>
-  ){}
+  ) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
     createEmployeeDto.employeeId ||= uuid();
@@ -32,6 +34,20 @@ export class EmployeesService {
     if (!employee)
       throw new NotFoundException();
     return employee;
+  }
+
+  async getPhoto(id: string) {
+    const { employeePhoto } = await this.findOne(id);
+    if (!employeePhoto)
+      throw new NotFoundException();
+    else return new StreamableFile(
+      createReadStream(
+        join(process.cwd(), `/src/employees/employee-photos/${employeePhoto}`)
+      ), {
+        type: (extname(employeePhoto) === ".png") ? "image/png" : "image/jpeg",
+        disposition: `attachment; filename="${employeePhoto}"`
+      }
+    );
   }
 
   async findByLocation(id: number) {

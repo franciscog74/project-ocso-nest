@@ -1,8 +1,6 @@
 import {
   Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe,
-  UploadedFile, applyDecorators,
-  ParseFilePipe,
-  MaxFileSizeValidator
+  UploadedFile, applyDecorators
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -85,6 +83,16 @@ export class EmployeesController {
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: "4" })) id: string) {
     return this.employeesService.findOne(id);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: "Fotografía en binario"
+  })
+  @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
+  @Get(":id/photo")
+  getPhoto(@Param('id', new ParseUUIDPipe({ version: "4" })) id: string) {
+    return this.employeesService.getPhoto(id);
   }
 
   @ApiParam({
