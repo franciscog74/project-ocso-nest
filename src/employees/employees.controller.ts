@@ -1,13 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseInterceptors, UploadedFile, applyDecorators } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe,
+  UploadedFile, applyDecorators,
+  ParseFilePipe,
+  MaxFileSizeValidator
+} from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ROLES } from 'src/auth/constants/roles.constants';
 import { ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Employee } from './entities/employee.entity';
 import { ApiAuth } from 'src/auth/decorators/api.decorator';
+import { FileInterceptorDecorator } from './decorators/file.decorator';
 
 const exampleEmployee = {
   employeeId: "UUID",
@@ -49,11 +54,15 @@ export class EmployeesController {
     description: "La fotografía se subió correctamente"
   })
   @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
-  @Post("upload")
-  @UseInterceptors(FileInterceptor("file", { dest: "./src/employees/employee-photos" }))
-  uploadPhoto(@UploadedFile() file: Express.Multer.File) {
-    // return this.employeesService.uploadPhoto();
-    return "OK";
+  @Post(":id/upload")
+  @FileInterceptorDecorator
+  uploadPhoto(
+    @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    return this.employeesService.update(id, {
+      employeePhoto: file.filename
+    });
   }
 
   @ApiResponse({
