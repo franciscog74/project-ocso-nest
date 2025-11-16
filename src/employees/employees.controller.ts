@@ -58,9 +58,7 @@ export class EmployeesController {
     @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
     @UploadedFile() file: Express.Multer.File
   ) {
-    return this.employeesService.update(id, {
-      employeePhoto: file.filename
-    });
+    return this.employeesService.uploadPhoto(id, file.filename);
   }
 
   @ApiResponse({
