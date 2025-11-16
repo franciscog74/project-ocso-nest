@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param, Res } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Res, ParseUUIDPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -12,7 +12,7 @@ const exampleUser = {
   userId: "UUID",
   userEmail: "correo@ejemplo.com",
   userPassword: "Contraseña con hashing",
-  userRoles: ["Employee", "Manager"]
+  userRoles: ["Employee"]
 } as User;
 
 @ApiResponse({
@@ -21,15 +21,26 @@ const exampleUser = {
 })
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiResponse({
     status: 201,
     example: exampleUser
   })
-  @Post('signup')
-  signup(@Body() createUserDto: CreateUserDto) {
-    return this.authService.registerUser(createUserDto);
+  @Post('register/employee/:id')
+  registerEmployee(
+    @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
+    @Body() createUserDto: CreateUserDto
+  ) {
+    return this.authService.registerEmployee(id, createUserDto);
+  }
+
+  @Post('register/manager/:id')
+  registerManager(
+    @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
+    @Body() createUserDto: CreateUserDto
+  ) {
+    return this.authService.registerManager(id, createUserDto);
   }
 
   @ApiResponse({
