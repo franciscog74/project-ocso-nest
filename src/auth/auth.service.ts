@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,11 +28,7 @@ export class AuthService {
   }
 
   async registerEmployee(id: string, createUserDto: CreateUserDto) {
-    if (
-      createUserDto.userRoles.includes("Admin") ||
-      createUserDto.userRoles.includes("Manager")
-    )
-      throw new BadRequestException("Rol inválido");
+    createUserDto.userRoles = ["Employee"];
     const employee = await this.employeeRepository.preload({
       employeeId: id,
       user: createUserDto
@@ -44,11 +40,7 @@ export class AuthService {
   }
 
   async registerManager(id: string, createUserDto: CreateUserDto) {
-    if (
-      createUserDto.userRoles.includes("Admin") ||
-      createUserDto.userRoles.includes("Employee")
-    )
-      throw new BadRequestException("Rol inválido");
+    createUserDto.userRoles = ["Manager"];
     const manager = await this.managerRepository.preload({
       managerId: id,
       user: createUserDto

@@ -1,4 +1,7 @@
-import { Controller, Post, Body, Patch, Param, Res, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller, Post, Body, Patch, Param, Res, ParseUUIDPipe, Query,
+  BadRequestException
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -27,20 +30,18 @@ export class AuthController {
     status: 201,
     example: exampleUser
   })
-  @Post('register/employee/:id')
-  registerEmployee(
+  @Post('register/:id')
+  register(
+    @Query("role") role: string,
     @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
     @Body() createUserDto: CreateUserDto
   ) {
-    return this.authService.registerEmployee(id, createUserDto);
-  }
-
-  @Post('register/manager/:id')
-  registerManager(
-    @Param('id', new ParseUUIDPipe({ version: "4" })) id: string,
-    @Body() createUserDto: CreateUserDto
-  ) {
-    return this.authService.registerManager(id, createUserDto);
+    if (role === "Employee")
+      return this.authService.registerEmployee(id, createUserDto);
+    else if (role === "Manager")
+      return this.authService.registerManager(id, createUserDto);
+    else
+      throw new BadRequestException("Rol inválido");
   }
 
   @ApiResponse({
