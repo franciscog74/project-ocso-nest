@@ -68,8 +68,8 @@ export class AuthController {
     status: 200,
     example: exampleUser
   })
-  @Patch('/:email')
-  update(@Param('email') userEmail: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.authService.updateUser(userEmail, updateUserDto);
+  @Patch('/:id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.authService.updateUser(id, updateUserDto);
   }
 }
