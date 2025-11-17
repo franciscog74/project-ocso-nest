@@ -37,7 +37,8 @@ export class EmployeesService {
   async findAll() {
     return await this.employeeRepository.find({
       relations: {
-        location: true
+        location: true,
+        user: true
       }
     });
   }
@@ -48,7 +49,8 @@ export class EmployeesService {
         employeeId: id
       },
       relations: {
-        location: true
+        location: true,
+        user: true
       }
     });
     if (!employee)

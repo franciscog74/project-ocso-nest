@@ -18,7 +18,8 @@ export class ManagersService {
   async findAll() {
     return await this.managerRepository.find({
       relations: {
-        location: true
+        location: true,
+        user: true
       }
     });
   }
@@ -29,7 +30,8 @@ export class ManagersService {
         managerId: id
       },
       relations: {
-        location: true
+        location: true,
+        user: true
       }
     });
     if (!manager)

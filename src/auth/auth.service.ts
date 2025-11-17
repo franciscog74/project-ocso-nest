@@ -35,7 +35,7 @@ export class AuthService {
     });
     if (!employee)
       throw new NotFoundException();
-    await this.registerUser(createUserDto);
+    employee.user = await this.registerUser(createUserDto);
     return this.employeeRepository.save(employee);
   }
 
@@ -47,7 +47,7 @@ export class AuthService {
     });
     if (!manager)
       throw new NotFoundException();
-    await this.registerUser(createUserDto);
+    manager.user = await this.registerUser(createUserDto);
     return this.managerRepository.save(manager);
   }
 
